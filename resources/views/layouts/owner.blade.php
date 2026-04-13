@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ $title ?? config('app.name', 'Northern Cafe') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #F8F9FB;
+        }
+        .sidebar {
+            background-color: #111111;
+        }
+        .sidebar-item-active {
+            background-color: #E97D5A;
+            color: white;
+            box-shadow: 0 10px 20px -3px rgba(233, 125, 90, 0.4);
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-72 sidebar flex flex-col h-screen sticky top-0">
+            <div class="p-8 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#E97D5A] rounded-xl flex items-center justify-center shadow-lg shadow-orange-900/50">
+                        <svg class="text-white w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    </div>
+                    <span class="text-2xl font-extrabold text-white tracking-tighter">Northern<span class="text-[#E97D5A]">.</span></span>
+                </div>
+            </div>
+
+            <div class="px-4 flex-1 overflow-y-auto">
+                <!-- Nav Section: Main -->
+                <div class="mb-8">
+                    <p class="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Main</p>
+                    <div class="space-y-2">
+                        <x-owner-nav-link href="{{ route('owner.dashboard') }}" :active="request()->routeIs('owner.dashboard')" icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            Overview
+                        </x-owner-nav-link>
+                        <x-owner-nav-link href="#" :active="false" icon="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            Laporan
+                        </x-owner-nav-link>
+                        <x-owner-nav-link href="{{ route('owner.inventory.suppliers') }}" :active="request()->routeIs('owner.inventory.suppliers')" icon="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                            Supplier
+                        </x-owner-nav-link>
+                        <x-owner-nav-link href="{{ route('owner.inventory.ingredients') }}" :active="request()->routeIs('owner.inventory.ingredients')" icon="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
+                            Bahan Baku
+                        </x-owner-nav-link>
+                        <x-owner-nav-link href="{{ route('owner.inventory.products') }}" :active="request()->routeIs('owner.inventory.products')" icon="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                            Produk Menu
+                        </x-owner-nav-link>
+                    </div>
+                </div>
+
+                <!-- Nav Section: Manajemen -->
+                <div>
+                    <p class="px-6 mb-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Manajemen</p>
+                    <div class="space-y-2">
+                        <x-owner-nav-link href="{{ route('owner.employees') }}" :active="request()->routeIs('owner.employees')" icon="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            Pegawai
+                        </x-owner-nav-link>
+                        <x-owner-nav-link href="{{ route('owner.attendance') }}" :active="request()->routeIs('owner.attendance')" icon="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            Absensi
+                        </x-owner-nav-link>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Bottom Area -->
+            <div class="p-6">
+                <div class="bg-gray-800/40 p-4 rounded-3xl flex items-center justify-between group overflow-hidden relative">
+                    <div class="flex items-center gap-3 relative z-10">
+                        <div class="w-10 h-10 bg-[#E97D5A] rounded-2xl flex items-center justify-center text-white font-bold shadow-lg shadow-orange-900/20">
+                            {{ substr(auth()->user()->name, 0, 1) }}{{ substr(strrchr(auth()->user()->name, " "), 1, 1) ?: '' }}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-black text-white leading-none mb-1">{{ auth()->user()->name }}</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Owner</span>
+                        </div>
+                    </div>
+                    <!-- Simple logout button inside profile -->
+                    <form method="POST" action="{{ route('logout') }}" class="relative z-10">
+                        @csrf
+                        <button type="submit" class="w-8 h-8 rounded-xl bg-gray-700/50 flex items-center justify-center text-gray-400 hover:text-rose-400 hover:bg-gray-700 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7"></path></svg>
+                        </button>
+                    </form>
+                    <!-- Glossy overlay -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Global Top Bar -->
+            <header class="h-24 px-12 flex items-center justify-between">
+                <div>
+                   @isset($header)
+                       {{ $header }}
+                   @else
+                       <div class="flex flex-col">
+                            <h2 class="text-3xl font-black text-slate-900 tracking-tighter leading-tight">Selamat pagi, {{ explode(' ', auth()->user()->name)[0] }}</h2>
+                            <p class="text-sm font-bold text-slate-400">{{ now()->translatedFormat('l, d F Y') }}</p>
+                       </div>
+                   @endisset
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100">
+                        <span class="text-xs font-black text-slate-800 uppercase tracking-widest">Hari ini</span>
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <button class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-400 hover:text-[#E97D5A] transition-all shadow-sm border border-slate-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Scroll Content -->
+            <main class="px-12 pb-12 flex-1">
+                {{ $slot }}
+            </main>
+        </div>
+    </div>
+</body>
+</html>

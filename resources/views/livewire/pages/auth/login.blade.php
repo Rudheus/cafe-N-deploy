@@ -23,83 +23,92 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div class="space-y-8">
-    <!-- Header -->
-    <div class="mb-10">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#E97D5A]/10 border border-[#E97D5A]/20 rounded-xl mb-6">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#E97D5A]"></span>
-            <span class="text-[#E97D5A] text-[10px] font-black uppercase tracking-widest">Sistem Manajemen Cafe</span>
+<div class="w-full max-w-[340px] mx-auto flex flex-col justify-center">
+    <!-- Logo & Header -->
+    <div class="text-center mb-10 flex flex-col items-center">
+        <!-- Optional animated coffee icon to match "Cafe Beans" -->
+        <div class="w-16 h-16 flex items-center justify-center mb-2">
+            <svg class="text-white w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m0 0l-3-3m3 3l3-3"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3C8.784 3 8 3.784 8 4.75v10.5C8 17.433 9.79 19 12 19s4-1.567 4-3.75V4.75C16 3.784 15.216 3 14.25 3h-4.5zM16 8h2a2 2 0 012 2v2a2 2 0 01-2 2h-2"></path>
+            </svg>
         </div>
-        <h2 class="text-4xl font-black text-slate-900 tracking-tighter leading-none mb-3">Selamat Datang</h2>
-        <p class="text-slate-400 font-bold">Masuk untuk mengelola operasional Northern Cafe.</p>
+        <h1 class="text-2xl font-black text-white tracking-tighter mb-4">Northern<br>Cafe</h1>
+        
+        <h2 class="text-xl font-bold text-gray-200 mt-6 tracking-tight leading-snug max-w-[280px]">
+            Welcome Back, Please login to your account
+        </h2>
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    @if(session('error'))
+        <div class="mb-4 text-xs font-bold text-rose-500 text-center bg-rose-500/10 p-3 rounded-xl border border-rose-500/20">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <form wire:submit="login" class="space-y-5">
-        <!-- Email -->
-        <div class="space-y-2">
-            <label for="email" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
-            <input wire:model="form.email" id="email" type="email" name="email"
-                   class="block w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-[#E97D5A] focus:border-transparent transition-all shadow-sm"
-                   placeholder="nama@cafe.com" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('form.email')" class="mt-1 ml-1" />
+        <!-- Email Address -->
+        <div class="space-y-1">
+            <label for="email" class="text-[10px] font-bold text-gray-400 pl-1">Email address</label>
+            <input wire:model="form.email" id="email" class="w-full px-5 py-4 bg-[#262626] border-0 rounded-xl text-sm font-bold text-white placeholder:text-gray-500 focus:ring-2 focus:ring-white transition-all shadow-inner" type="email" name="email" required autofocus autocomplete="username" placeholder="johndoe@gmail.com">
+            <x-input-error :messages="$errors->get('form.email')" class="mt-1" />
         </div>
 
         <!-- Password -->
-        <div class="space-y-2">
-            <div class="flex items-center justify-between">
-                <label for="password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                @if (Route::has('password.request'))
-                    <a class="text-[10px] font-black text-[#E97D5A] hover:text-orange-600 uppercase tracking-widest transition-colors"
-                       href="{{ route('password.request') }}" wire:navigate>
-                        Lupa Password?
-                    </a>
-                @endif
+        <div class="space-y-1">
+            <label for="password" class="text-[10px] font-bold text-gray-400 pl-1">Password</label>
+            <div class="relative">
+                <input wire:model="form.password" id="password" class="w-full px-5 py-4 bg-[#262626] border-0 rounded-xl text-sm font-bold text-white placeholder:text-gray-500 focus:ring-2 focus:ring-white transition-all shadow-inner" type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+                <button type="button" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
             </div>
-            <input wire:model="form.password" id="password" type="password" name="password"
-                   class="block w-full px-6 py-4 bg-white border border-slate-200 rounded-2xl text-slate-900 font-bold placeholder:text-slate-300 focus:ring-2 focus:ring-[#E97D5A] focus:border-transparent transition-all shadow-sm"
-                   placeholder="••••••••" required autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('form.password')" class="mt-1 ml-1" />
+            <x-input-error :messages="$errors->get('form.password')" class="mt-1" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="flex items-center gap-3 py-2">
-            <input wire:model="form.remember" id="remember" type="checkbox"
-                   class="w-5 h-5 rounded-lg border-slate-200 text-[#E97D5A] shadow-sm focus:ring-[#E97D5A] cursor-pointer">
-            <label for="remember" class="text-sm font-bold text-slate-500 cursor-pointer select-none">Biarkan saya tetap masuk</label>
+        <div class="flex items-center justify-between pt-1 px-1">
+            <div class="flex items-center gap-2">
+                <div class="relative flex items-center">
+                    <input wire:model="form.remember" id="remember" type="checkbox"
+                           class="w-4 h-4 rounded bg-[#262626] border-0 text-white focus:ring-white cursor-pointer appearance-none checked:bg-emerald-500">
+                    <svg class="w-3 h-3 text-white absolute left-0.5 pointer-events-none opacity-0 peer-checked:opacity-100" style="opacity: {{ $form->remember ? '1' : '0' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <label for="remember" class="text-[10px] font-bold text-gray-400 cursor-pointer select-none">Remember me</label>
+            </div>
+            <a href="{{ route('password.request') }}" class="text-[10px] font-bold text-gray-400 hover:text-white transition-colors">Forgot password?</a>
         </div>
 
         <!-- Submit -->
-        <div class="pt-2">
+        <div class="pt-4 flex flex-col items-center">
             <button type="submit"
-                    class="w-full py-4 px-6 bg-[#111111] hover:bg-[#1a1a1a] text-white font-black rounded-2xl shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-base group">
-                <span>Masuk ke Sistem</span>
-                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </svg>
+                    class="w-40 py-3.5 bg-white hover:bg-gray-100 text-[#1A1A1A] font-black rounded-[2rem] shadow-lg active:scale-95 transition-all flex items-center justify-center text-sm">
+                Sign In
             </button>
         </div>
 
-        <!-- Divider & Role Description -->
-        <div class="pt-4 border-t border-slate-100">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="w-8 h-8 bg-[#E97D5A]/10 rounded-xl flex items-center justify-center mb-3">
-                        <svg class="w-4 h-4 text-[#E97D5A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <p class="text-xs font-black text-slate-800 leading-none mb-1">Owner</p>
-                    <p class="text-[10px] font-bold text-slate-400 leading-tight">Akses penuh ke semua fitur.</p>
-                </div>
-                <div class="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div class="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center mb-3">
-                        <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                    </div>
-                    <p class="text-xs font-black text-slate-800 leading-none mb-1">Pegawai</p>
-                    <p class="text-[10px] font-bold text-slate-400 leading-tight">Kasir & absensi saja.</p>
-                </div>
-            </div>
+        <div class="flex items-center gap-4 py-4 opacity-50">
+            <div class="flex-1 h-px bg-gradient-to-r from-transparent to-gray-400"></div>
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Or</span>
+            <div class="flex-1 h-px bg-gradient-to-l from-transparent to-gray-400"></div>
+        </div>
+
+        <div class="flex flex-col items-center space-y-8">
+            <a href="{{ route('google.login') }}" class="flex items-center justify-center gap-3 text-sm font-bold text-gray-300 hover:text-white transition-colors group">
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Sign in with google
+            </a>
+
+            <p class="text-[11px] font-bold text-gray-400">
+                Don't have an account? 
+                <a href="{{ route('register') }}" wire:navigate class="text-white hover:underline transition-all">Sign up</a>
+            </p>
         </div>
     </form>
 </div>

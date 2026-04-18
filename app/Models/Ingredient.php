@@ -23,4 +23,9 @@ class Ingredient extends Model
         if ($this->stock_qty <= $this->min_stock) return 'Menipis';
         return 'Aman';
     }
+
+    public function logs()
+    {
+        return $this->hasMany(StockLog::class);
+    }
 }

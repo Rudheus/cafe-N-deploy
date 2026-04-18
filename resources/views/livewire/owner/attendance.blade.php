@@ -34,6 +34,8 @@ $attendanceData = computed(function () {
             'check_in' => $att?->check_in,
             'check_out' => $att?->check_out,
             'notes' => $att?->notes,
+            'check_in_photo' => $att?->check_in_photo,
+            'check_out_photo' => $att?->check_out_photo,
             'status' => $att
                 ? ($att->check_in && strtotime($att->check_in) > strtotime($this->selectedDate . ' 08:15:00') ? 'Terlambat' : 'On Time')
                 : 'Tidak Hadir',
@@ -105,10 +107,12 @@ $summary = computed(function () {
                 <thead>
                     <tr class="bg-slate-50/50">
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pegawai</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Check-in</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Check-out</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Foto</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Foto</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Keterangan</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
@@ -137,24 +141,40 @@ $summary = computed(function () {
                                 <span class="font-black text-slate-700">{{ $row['name'] }}</span>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
+                        <td class="px-8 py-6 text-center">
                             @if($row['check_in'])
                                 <span class="font-black text-slate-800 tabular-nums text-lg">
                                     {{ \Carbon\Carbon::parse($row['check_in'])->format('H:i') }}
                                 </span>
-                                <span class="text-slate-400 font-bold text-xs ml-1">WIB</span>
                             @else
                                 <span class="text-slate-300 font-bold italic">—</span>
                             @endif
                         </td>
-                        <td class="px-8 py-6">
+                        <td class="px-8 py-6 text-center">
+                            @if($row['check_in_photo'])
+                                <div class="relative inline-block group/photo">
+                                    <img src="{{ Storage::url($row['check_in_photo']) }}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-sm hover:scale-[3] hover:z-50 transition-all cursor-zoom-in">
+                                </div>
+                            @else
+                                <span class="text-[10px] font-bold text-slate-300 italic">—</span>
+                            @endif
+                        </td>
+                        <td class="px-8 py-6 text-center">
                             @if($row['check_out'])
                                 <span class="font-black text-slate-800 tabular-nums text-lg">
                                     {{ \Carbon\Carbon::parse($row['check_out'])->format('H:i') }}
                                 </span>
-                                <span class="text-slate-400 font-bold text-xs ml-1">WIB</span>
                             @else
-                                <span class="text-slate-300 font-bold italic">Belum checkout</span>
+                                <span class="text-xs font-bold text-slate-300 italic">—</span>
+                            @endif
+                        </td>
+                        <td class="px-8 py-6 text-center">
+                            @if($row['check_out_photo'])
+                                <div class="relative inline-block group/photo">
+                                    <img src="{{ Storage::url($row['check_out_photo']) }}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-sm hover:scale-[3] hover:z-50 transition-all cursor-zoom-in">
+                                </div>
+                            @else
+                                <span class="text-[10px] font-bold text-slate-300 italic">—</span>
                             @endif
                         </td>
                         <td class="px-8 py-6">

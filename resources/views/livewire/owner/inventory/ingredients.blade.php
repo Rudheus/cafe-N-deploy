@@ -16,6 +16,7 @@ state([
     'supplier_id' => '',
     'editingIngredientId' => null,
     'showForm' => false,
+    'change_reason' => 'Update Stok Manual', // Added reason
 ]);
 
 rules([
@@ -49,13 +50,37 @@ $save = function () {
     ];
 
     if ($this->editingIngredientId) {
-        Ingredient::find($this->editingIngredientId)->update($data);
+        $ingredient = Ingredient::find($this->editingIngredientId);
+        $oldStock = $ingredient->stock_qty;
+        $ingredient->update($data);
+
+        // Log if stock changed
+        if ($oldStock != $this->stock_qty) {
+            App\Models\StockLog::create([
+                'ingredient_id' => $ingredient->id,
+                'type' => $this->stock_qty > $oldStock ? 'in' : 'out',
+                'qty' => abs($this->stock_qty - $oldStock),
+                'recorded_by' => auth()->id(),
+                'reason' => $this->change_reason,
+            ]);
+        }
     } else {
-        Ingredient::create($data);
+        $ingredient = Ingredient::create($data);
+        // Log initial stock
+        if ($this->stock_qty > 0) {
+            App\Models\StockLog::create([
+                'ingredient_id' => $ingredient->id,
+                'type' => 'in',
+                'qty' => $this->stock_qty,
+                'recorded_by' => auth()->id(),
+                'reason' => 'Stok Awal / Input Baru',
+            ]);
+        }
     }
 
-    $this->reset('name', 'unit', 'stock_qty', 'min_stock', 'cost_per_unit', 'supplier_id', 'editingIngredientId', 'showForm');
+    $this->reset('name', 'unit', 'stock_qty', 'min_stock', 'cost_per_unit', 'supplier_id', 'editingIngredientId', 'showForm', 'change_reason');
     $this->unit = 'Kg';
+    $this->change_reason = 'Update Stok Manual';
 };
 
 $edit = function ($id) {
@@ -152,15 +177,22 @@ $cancel = function () {
                 </div>
 
                 <!-- Supplier -->
-                <div class="md:col-span-3">
+                <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Supplier (Opsional)</label>
                     <select wire:model="supplier_id"
-                            class="w-full md:w-1/2 px-6 py-4 bg-slate-50 border-0 rounded-2xl text-slate-800 font-bold focus:ring-2 focus:ring-[#E97D5A] transition-all appearance-none">
+                            class="w-full px-6 py-4 bg-slate-50 border-0 rounded-2xl text-slate-800 font-bold focus:ring-2 focus:ring-[#E97D5A] transition-all appearance-none">
                         <option value="">— Pilih Supplier —</option>
                         @foreach($this->suppliers as $s)
                             <option value="{{ $s->id }}">{{ $s->name }}</option>
                         @endforeach
                     </select>
+                </div>
+
+                <!-- Reason for update -->
+                <div class="md:col-span-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Alasan Perubahan Stok (Opsional)</label>
+                    <input wire:model="change_reason" type="text" placeholder="Contoh: Barang Masuk (Restock), Rusak, dll"
+                           class="w-full px-6 py-4 bg-slate-50 border-0 rounded-2xl text-slate-800 font-bold focus:ring-2 focus:ring-[#E97D5A] transition-all">
                 </div>
             </div>
 

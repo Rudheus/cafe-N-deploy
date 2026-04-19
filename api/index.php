@@ -1,9 +1,7 @@
 <?php
 
-// 1. Definisikan folder storage di folder /tmp yang writable
+// 1. Buat folder temporary yang writable oleh Vercel
 $storagePath = '/tmp/storage';
-
-// 2. Buat struktur folder yang dibutuhkan Laravel
 $folders = [
     $storagePath . '/framework/views',
     $storagePath . '/framework/cache',
@@ -17,10 +15,9 @@ foreach ($folders as $folder) {
     }
 }
 
-// 3. Set Environment Variables secara runtime agar Laravel tahu kemana harus menulis
-putenv("APP_STORAGE=$storagePath");
+// 2. Paksa Laravel menggunakan folder /tmp untuk compiled views
 putenv("VIEW_COMPILED_PATH=$storagePath/framework/views");
-putenv("SESSION_DRIVER=file");
+// Paksa agar bootstrap cache juga lari ke /tmp
+putenv("APP_STORAGE=$storagePath");
 
-// 4. Load aplikasi
 require __DIR__ . '/../public/index.php';

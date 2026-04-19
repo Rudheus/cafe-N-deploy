@@ -1,9 +1,10 @@
 <?php
+// 1. TRIK RAHASIA: Paksa Laravel memuntahkan error dalam bentuk teks JSON
+// Ini akan mencegah Laravel memanggil sistem View yang bermasalah di Vercel
+$_SERVER['HTTP_ACCEPT'] = 'application/json';
 
-// 1. Tentukan lokasi folder sementara khusus Vercel
+// 2. Siapkan folder memori sementara
 $tmpStorage = '/tmp/storage';
-
-// 2. Daftar folder wajib yang dibutuhkan Laravel untuk bernapas
 $directories = [
     $tmpStorage . '/framework/views',
     $tmpStorage . '/framework/cache/data',
@@ -12,16 +13,22 @@ $directories = [
     $tmpStorage . '/bootstrap/cache'
 ];
 
-// 3. Buat folder-folder tersebut secara otomatis jika belum ada
 foreach ($directories as $dir) {
     if (!is_dir($dir)) {
         @mkdir($dir, 0777, true);
     }
 }
 
-// 4. Paksa Laravel menggunakan folder sementara ini
+// 3. Timpa pengaturan krusial secara paksa langsung dari dalam kode
 putenv('VIEW_COMPILED_PATH=' . $tmpStorage . '/framework/views');
 $_ENV['VIEW_COMPILED_PATH'] = $tmpStorage . '/framework/views';
 
-// 5. Jalankan aplikasi utama Laravel
+putenv('LOG_CHANNEL=stderr');
+$_ENV['LOG_CHANNEL'] = 'stderr';
+
+// Matikan sementara session database agar tidak membebani koneksi awal
+putenv('SESSION_DRIVER=array'); 
+$_ENV['SESSION_DRIVER'] = 'array';
+
+// 4. Nyalakan mesin Laravel
 require __DIR__ . '/../public/index.php';

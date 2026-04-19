@@ -1,20 +1,40 @@
 <?php
 
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+// Fix untuk Vercel: redirect storage ke /tmp yang writable
+$storagePath = '/tmp/storage';
+$folders = [
+    $storagePath . '/app/public',
+    $storagePath . '/framework/cache/data',
+    $storagePath . '/framework/sessions',
+    $storagePath . '/framework/views',
+    $storagePath . '/logs',
+];
+foreach ($folders as $folder) {
+    if (!is_dir($folder)) {
+        mkdir($folder, 0777, true);
+    }
 }
 
-// Register the Composer autoloader...
+// Override env sebelum Laravel boot
+$_ENV['APP_STORAGE'] = $storagePath;
+putenv("APP_STORAGE=$storagePath");
+
 require __DIR__.'/../vendor/autoload.php';
 
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
+// Bootstrap Laravel dengan storage path override
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+// Override storage path SETELAH app dibuat tapi SEBELUM request dihandle
+$app->useStoragePath($storagePath);
+
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+$response = $kernel->handle(
+    $request = Request::capture()
+)->send();
+
+$kernel->terminate($request, $response);

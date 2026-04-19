@@ -9,8 +9,9 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
-Route::view('/', 'welcome');
-
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 Route::get('dashboard', function () {
     if (auth()->user()->role === 'owner') {
         return redirect()->route('owner.dashboard');
